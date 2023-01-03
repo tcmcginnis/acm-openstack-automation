@@ -1,0 +1,38 @@
+ # === Validate the Openstack Server Flavor ================================
+- name: Get image info from OpenStack
+  os_image_info:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_username }}"
+      password: "{{ osp_password }}"
+      project:name: "{{ osp_project }}"
+      project_domain: "{{ osp_projectdomain }}"
+    cacert: "{{ cacert }}"
+  register: flavors
+
+#   - name: Display OpenStack flavors
+#     debug:
+#       msg:
+#         - "{{ flavors.openstack_flavors }}"
+ 
+- name: "Initialize the flavor variable"
+  set_fact:
+    flavor: ""
+ 
+- name: find request Server Flavor in the list
+  set_fact:
+    flavor: "{{ item }}"
+  when: "'{{ server_flavor }}' in item"
+  with_items:
+    - "{{ flavors.openstack_flavors | map(attribute='name') | list }}"
+ 
+# - name: print selected Server Flavor
+#   debug:
+#     msg: "{{ flavor }}"
+ 
+- name: Fail if the Server Flavor is not defined in OpenStack
+  fail:
+    msg:
+      - "The Openstack Server Flavor {{ server_flavor }} cannot be located in Openstack"
+  when: flavor  == ""
+

@@ -1,0 +1,44 @@
+---
+- name: "Check if we are logged into an ACM cluster"
+  shell: oc get clusterimagesets | head -1
+  register: result
+ 
+- name: OpenStack Login / Query error
+  debug:
+    msg:
+      - "!!! Openshift Login is required !!!"
+      - ""
+      - "You must be logged into an Openshift cluster running ACM"
+      - ""
+      - "This is required so the highest version of Openshift {{ ocp_release }} can be determined."
+      - ""
+  when: result.stdout == ""
+ 
+- name: Fail if we are not logged into a valid OpenShift cluster running ACM
+  fail:
+    msg: "No Openshift login has been detected or the cluster is not running ACM"
+  when: result.stdout == ""
+ 
+- name: "Get highest version of available installer images for Openshift {{ ocp_release }}"
+  shell: oc get clusterimagesets | grep ^{{ image_prefix }} | awk -F'{{ image_prefix }}' '{print $2}' | awk -F"-" '{print $1}' | sort -n | tail -1
+  register: result
+ 
+- set_fact:
+    ocp_image_version: "{{ result.stdout}}"
+ 
+- set_fact:
+    ocp_image_prefix: "{{ image_prefix }}{{ ocp_image_version }}"
+    ocp_version: "{{ ocp_release }}.{{ ocp_image_version }}"
+ 
+- name: Get Openshift Installer
+  shell: oc get clusterimagesets | grep ^{{ ocp_image_prefix }} | awk '{print $1}' | tail -1
+  register: result
+ 
+- set_fact:
+    ocp_image: "{{ result.stdout}}"
+ 
+- name: Display the Installer image selection
+  debug:
+    msg:
+      - "Deploying Openshift version {{ ocp_version }}.    Using Installer image {{ ocp_image }}"
+ 
