@@ -1,11 +1,11 @@
 ---
-# tasks file for acm-gather-deployment-facts
- 
-# === OpenStack Subnet processing query and processing section  ========================
-#
- 
-# === Perform test OpenStack login to validate the datacenter / cloud / project name ===
-#
+# tasks file for locating subnet information in OpenStack
+
+ # === OpenStack Subnet processing query and processing section  ========================
+ #
+
+ # === Perform test OpenStack login to validate the datacenter / cloud / project name ===
+ #
 - name: Get subnet info from OpenStack
   os_subnets_info:
     auth:
@@ -13,16 +13,18 @@
       username: "{{ osp_username }}"
       password: "{{ osp_password }}"
       project_name: "{{ osp_project }}"
-      project_domain_name: redacted
-      user_domain_name: redacted
+      project_domain_name: "{{ osp_projectdomain }}"
+      user_domain_name: "{{ osp_userdomain }}"
+    filters:
+      tenant_id: "{{ osp_project_id }}"
     cacert: "{{ cacert }}"
   register: subnets
- 
-# - name: Display OpenStack subnets
-#   debug:
-#    msg:
-#       - "{{ subnets.openstack_subnets }}"
- 
+
+ # - name: Display OpenStack subnets
+ #   debug:
+ #    msg:
+ #       - "{{ subnets.openstack_subnets }}"
+
 - name: OpenStack Login / Query error
   debug:
     msg:
@@ -39,42 +41,24 @@
       - ""
       - "cacert: {{ cacert }}"
   when: subnets.openstack_subnets == []
- 
+
+- name: "Initialize the net name in case one is not found"
+  set_fact:
+    net_name: "UNSET"
+
+- name: "Locate valid subnet name containing {{ subnet_search_regex }}"
+  set_fact:
+    net_name: "{{ item }}"
+  when: "'{{subnet_search_regex|upper}}' in item|upper"
+  with_items:
+          - "{{ subnets.openstack_subnets | map(attribute='name') | list }}"
+
 - name: Fail if Openstack query returns no results
   fail:
     msg:
-      - "OpenStack Query failed!!!"
-      - "Datacenter:{{ osp_datacenter }}  Cloud: {{ osp_cloud }}  Project: {{ osp_project }}"
-  when: subnets.openstack_subnets == []
- 
- 
-# === Get the project id (uuid) to be used in subnet query filters  ====================
-#
-- name: Get project info from OpenStack
-  os_project_info:
-    auth:
-      auth_url: "{{ osp_url }}"
-      username: "{{ osp_username }}"
-      password: "{{ osp_password }}"
-      project_name: "{{ osp_project }}"
-      project_domain_name: redacted
-      user_domain_name: redacted
-    name: "{{ osp_project }}"
-    cacert: "{{ cacert }}"
-  register: projects
- 
-# - name: Display results
-#   debug:
-#     msg:
-#       - "{{ projects.openstack_projects }}"
- 
-- name: Set project id variable from OpenStack query
-  set_fact:
-    osp_project_id: "{{ projects | json_query('openstack_projects[0].id') }}"
- 
- 
-# === Query the subnets from Openstack  ================================================
-#
+      - No subnets found containing {{ subnet_search_regex }} in project {{ osp_project }}"
+  when: net_name == "UNSET"
+
 - name: Get subnet info from OpenStack
   os_subnets_info:
     auth:
@@ -82,78 +66,23 @@
       username: "{{ osp_username }}"
       password: "{{ osp_password }}"
       project_name: "{{ osp_project }}"
-      project_domain_name: redacted
-      user_domain_name: redacted
-    name: "{{ subnet_search_regex }}"
+      project_domain_name: YourOpenStackProjectDomain Goes Here
+      user_domain_name: YourOpenStackProjectDomain Goes Here
+    name: "{{ net_name }}"
     filters:
       tenant_id: "{{ osp_project_id }}"
     cacert: "{{ cacert }}"
- 
   register: subnets
- 
-- name: Save subnet query result
-  set_fact:
-    query_success: False
-  when: subnets.openstack_subnets == []
- 
-- name: Save subnet query result
-  set_fact:
-    query_success: True
-  when: not subnets.openstack_subnets == []
- 
-# - name: Display OpenStack subnets
-#   debug:
-#    msg:
-#       - "{{ subnets.openstack_subnets }}"
- 
- 
-# === Change the subnet name regex from upper to lower or lower to upper.     ==========
-# === and retry the query if the last one didn't return data.                 ==========
-# === This is to accomodate the inconsistencies in the Stretch subnet label.  ==========
-#
-- name: Change case upper
-  set_fact:
-    retry_search_regex: "{{ subnet_search_regex|upper }}"
-  when: subnet_search_regex == subnet_search_regex|lower
- 
-- name: Change case lower
-  set_fact:
-    retry_search_regex: "{{ subnet_search_regex|lower }}"
-  when: subnet_search_regex == subnet_search_regex|upper
- 
- 
-# === Query the subnets from Openstack using the case modified Subnet regex  ===========
-#
-- name: Get subnet info from OpenStack (retry)
-  os_subnets_info:
-    auth:
-      auth_url: "{{ osp_url }}"
-      username: "{{ osp_username }}"
-      password: "{{ osp_password }}"
-      project_name: "{{ osp_project }}"
-      project_domain_name: redacted
-      user_domain_name: redacted
-    name: "{{ retry_search_regex }}"
-    filters:
-      tenant_id: "{{ osp_project_id }}"
-    cacert: "{{ cacert }}"
-  register: subnets_retry
-  when: query_success == False
- 
-- name: Use the retried query result if the first one failed.
-  set_fact:
-    subnets: "{{ subnets_retry }}"
-  when: query_success == False
- 
+
 - name: Fail if Openstack query returns no results
   fail:
     msg:
-      - No subnets found containing {{ subnet_search_regex }} in project {{ osp_project }}"
+      - "No subnets found containing {{ subnet_search_regex }} in project {{ osp_project }}"
   when: subnets.openstack_subnets == []
- 
- 
-# === Process the results from the OpenStack subnet query  =============================
-#
+
+
+ # === Process the results from the OpenStack subnet query  =============================
+ #
 - name: Set Subnet variables from OpenStack query
   set_fact:
     subnet_id: "{{ subnets | json_query('openstack_subnets[0].id') }}"

@@ -1,2 +1,10 @@
----
-# vars file for acm-configure-deployment
+osp_cloud:
+osp_datacenter:
+osp_project:
+cluster_name:
+ # server_flavor:
+ # image_name:
+cluster_subnet:
+subnet_id:
+apiVIP:
+ingressVIP:

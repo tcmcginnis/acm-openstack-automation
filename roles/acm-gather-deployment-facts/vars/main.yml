@@ -1,2 +1,32 @@
 ---
 # vars file for acm-gather-deployment-facts
+osp_url:
+osp_datacenter:
+osp_cloud:
+osp_project:
+cluster_name:
+ # server_flavor:
+cluster_subnet:
+subnet_id:
+apiVIP:
+ingressVIP:
+ocp_image:
+ # ocp_image: img4.10.15-x86-64-appsub
+
+image_prefix: "img{{ ocp_release }}."
+image_key: "ocp-release:{{ocp_release}}"
+
+vars_prompt:
+
+- name: osp_cloud
+  prompt: "OSP cloud?"
+  private: no
+
+- name: osp_datacenter
+  prompt: "Datacenter (eg: cloud0, cloud1,cloud2)?"
+  private: no
+
+- name: osp_project
+  prompt: "what is the name of OSP project?"
+  private: no
+
