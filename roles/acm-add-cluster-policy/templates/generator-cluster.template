@@ -1,0 +1,19 @@
+# Cluster specific version 1.0
+  - name: infra-machinesets-{{ cluster_name }}
+    manifests:
+      - path: clusters/{{ cluster_name }}/machineset/
+    placement:
+      clusterSelectors:
+        name: {{ cluster_name }}
+  - name: api-server-config-{{ cluster_name }}
+    manifests:
+      - path: clusters/{{ cluster_name }}/api-server-config/
+    placement:
+      clusterSelectors:
+        name: {{ cluster_name }}
+  - name: tls-certificates-{{ cluster_name }}
+    manifests:
+      - path: clusters/{{ cluster_name }}/tls/
+    placement:
+      clusterSelectors:
+        name: {{ cluster_name }}

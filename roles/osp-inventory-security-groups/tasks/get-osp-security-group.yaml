@@ -1,0 +1,47 @@
+---
+- name: Get project info from OpenStack
+  os_project_info:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_admin }}"
+      password: "{{ osp_adminkey }}"
+      user_domain_name: "{{ osp_admindomain }}"
+      project_name: "{{ osp_adminproject }}"
+      project_domain_name: "{{ osp_admindomain }}"
+    name: "{{ osp_project }}"
+    cacert: "{{ cacert }}"
+  register: projects
+
+- name: Set project id variable from OpenStack query
+  set_fact:
+    osp_project_id: "{{ projects | json_query('openstack_projects[0].id') }}"
+
+- name: Get Security Group info
+  os_security_group:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_admin }}"
+      password: "{{ osp_adminkey }}"
+      user_domain_name: "{{ osp_admindomain }}"
+      project_domain_name: "{{ osp_admindomain }}"
+      project_name: "{{ osp_adminproject }}"
+    name: "{{ osp_sg }}"
+    project: "{{ osp_project }}"
+    cacert: "{{ cacert }}"
+  register: sg
+
+ # - name: Display results
+ #   debug:
+ #     msg:
+ #       - "{{ sg }}"
+
+- name: Set Security Group id variable from OpenStack query
+  set_fact:
+    osp_sg_name: "{{ sg.secgroup.name }}"
+    osp_sg_id: "{{ sg.id }}"
+
+ # - name: Display results
+ #   debug:
+ #     msg:
+ #       - "Security Group name:{{ osp_sg_name }}"
+ #       - "Security Group id:{{ osp_sg_id }}"

@@ -1,0 +1,5 @@
+---
+# tasks file for acm-launch-cluster-deployment
+#
+- import_tasks: ocp-create-acm-objects.yaml
+

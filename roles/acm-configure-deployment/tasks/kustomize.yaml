@@ -1,0 +1,31 @@
+---
+- name: Check the presence of the git repo hub "{{ git_repo_path }}"
+  stat:
+    path: "{{ git_repo_path }}"
+  register: gitrepo
+
+- name: Generate a GIT based folder for the Kustomize variables
+  set_fact:
+    kustomize_directory: "{{ git_repo_path }}/{{ cluster_name }}/vars"
+  when: gitrepo.stat.exists
+
+- name: Ensure the Kustomize folder exists and create one if not
+  file:
+    path: "{{ kustomize_directory }}"
+    state: directory
+  when: gitrepo.stat.exists
+
+- name: Set the Kustomize directory to the playbook directory if the GIT repo directory does not exist
+  set_fact:
+    kustomize_directory: "{{ playbook_dir }}"
+  when: not gitrepo.stat.exists
+
+- name: Display location of Kustomize yaml"
+  debug:
+    msg: "Writing Kustomize Deployment yaml to '{{ kustomize_directory }}'"
+
+- name: Jinja 2 template the Kustomize variable yaml file
+  template:
+    src:  kustomize-vars.j2
+    dest:  "{{ kustomize_directory }}/main.yaml"
+

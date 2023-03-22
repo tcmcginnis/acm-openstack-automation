@@ -1,0 +1,23 @@
+---
+# vars file for acm-gather-deployment-facts
+osp_url:
+osp_datacenter:
+osp_cloud:
+osp_project:
+cluster_name:
+
+# Below is for documentation purposes only
+vars_prompt:
+
+- name: osp_cloud
+  prompt: "OSP cloud?"
+  private: no
+
+- name: osp_datacenter
+  prompt: "Datacenter (eg: cloud0, cloud1,cloud2)?"
+  private: no
+
+- name: osp_project
+  prompt: "what is the name of OSP project?"
+  private: no
+

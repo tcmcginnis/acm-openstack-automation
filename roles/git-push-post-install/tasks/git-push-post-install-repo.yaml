@@ -1,0 +1,38 @@
+---
+# tasks file git-push-install-repo
+#
+- name: Set cluster folder location
+  set_fact:
+    cluster_folder: "{{ git_post_deployment_path }}/policies/post-deployment/clusters/{{ cluster_name }}"
+    policy_folder: "{{ git_post_deployment_path }}/policies"
+
+- name: Add the Openshift Cluster to "{{ cluster_folder }}"
+  shell: git -C {{ git_post_deployment_path }} add {{ cluster_folder }}
+  register: result
+
+- name: Display GIT response
+  debug:
+    msg:
+      - "{{ result }}"
+
+- name: Commit the Cluster ACM policies to "{{ policy_folder }}"
+  shell: git -C {{ git_post_deployment_path }} commit -m "Add cluster {{ cluster_name }}" {{ policy_folder }}
+  ignore_errors: true
+  register: result
+
+- name: Display GIT response
+  debug:
+    msg:
+      - "{{ result }}"
+
+- name: Publish the Cluster ACM  policies to "{{ cluster_folder }}"
+  shell: git -C {{ git_post_deployment_path }} push
+  register: result
+
+- name: Display GIT response
+  debug:
+    msg:
+      - "{{ result }}"
+
+
+

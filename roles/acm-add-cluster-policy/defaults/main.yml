@@ -1,0 +1,8 @@
+---
+# defaults file for acm-add-cluster-policy
+GeneratorFile: "{{ git_post_deployment_path }}/policies/post-deployment/generator.yaml"
+clusterEnterTemplate: generator-cluster.template
+
+PlacementFile: "{{ git_post_deployment_path }}/policies/rhacm-placements/ocp-post-deployment-clusters.yaml"
+PlacementFile_ReleaseSpecific: "{{ git_post_deployment_path }}/policies/rhacm-placements/ocp-release-{{ ocp_release }}-clusters.yaml"
+

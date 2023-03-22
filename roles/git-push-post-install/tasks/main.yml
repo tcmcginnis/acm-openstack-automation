@@ -1,0 +1,4 @@
+---
+# tasks file for git-push-post-install
+
+- import_tasks: git-push-post-install-repo.yaml

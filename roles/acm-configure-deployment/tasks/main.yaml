@@ -1,0 +1,52 @@
+---
+ # Note: The "config_list" list is defined in defaults
+ #
+- name: Check the presence of the git repo hub "{{ git_repo_path }}"
+  stat:
+    path: "{{ git_repo_path }}"
+  register: gitrepo
+
+- name: Generate a GIT based folder for the yaml output
+  set_fact:
+    yaml_directory: "{{ git_repo_path }}/{{ cluster_name }}/acm"
+  when: gitrepo.stat.exists
+
+- name: Ensure the ACM folder exists and create one if not
+  file:
+    path: "{{ yaml_directory }}"
+    state: directory
+  when: gitrepo.stat.exists
+
+- name: Set the yaml directory to the playbook directory if the GIT repo directory does not exist
+  set_fact:
+    yaml_directory: "{{ playbook_dir }}"
+  when: not gitrepo.stat.exists
+
+- name: Display location of deployment yaml"
+  debug:
+    msg: "Writing ACM Deployment yaml to '{{ yaml_directory }}'"
+
+- name: "Remove deployment yaml files from {{ yaml_directory }} if they already exist"
+  ansible.builtin.file:
+    path: "{{ yaml_directory }}/{{ item }}.yaml"
+    state: absent
+  with_items:
+    - "{{ config_list }}"
+    - install-config
+
+- name: Jinja 2 template the install-config.yaml file
+  template:
+    src:  install-config.j2
+    dest:  "{{ yaml_directory }}/install-config.yaml"
+
+- name: Encode install-config
+  set_fact:
+    installconfig: "{{ lookup('template', yaml_directory + '/install-config.yaml' ) | string | b64encode }}"
+
+- name: "Process Jinja 2 configuration template yaml files"
+  template:
+    src:  "{{ item }}.j2"
+    dest:  "{{ yaml_directory }}/{{ item }}.yaml"
+  with_items:
+    - "{{ config_list }}"
+

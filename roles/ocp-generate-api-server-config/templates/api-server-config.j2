@@ -1,0 +1,14 @@
+apiVersion: config.openshift.io/v1
+kind: APIServer
+metadata:
+  name: cluster
+spec:
+  audit:
+    profile: Default
+  servingCerts:
+    namedCertificates:
+    - names: # cluster api
+      - api.{{ cluster_name }}.{{ ocp_basedomain }}
+      servingCertificate:
+        name: api-tls-secret
+

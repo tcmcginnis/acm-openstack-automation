@@ -1,0 +1,14 @@
+- hosts: localhost
+  user: root
+  vars:
+  roles:
+  - role: acm-deployment-defaults
+
+  - role: osp-set-project
+
+  - role: acm-gather-deployment-facts
+
+  - role: osp-inventory-security-groups
+
+  - role: osp-security-groups
+

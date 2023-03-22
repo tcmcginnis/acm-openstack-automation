@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: {{ cluster_name }}-openstack-creds
+  namespace: {{ cluster_name }}
+stringData:
+  cloud: {{ osp_project }}
+  clouds.yaml: |-
+    clouds:
+      {{ osp_project }}:
+        auth:
+          auth_url: {{ osp_url }}
+          password: '{{ osp_password }}'
+          project_domain_name: "{{ osp_projectdomain }}"
+          project_name: {{ osp_project }}
+          user_domain_name: "{{ osp_userdomain }}"
+          username: {{ osp_username }}
+        cacert: /etc/openstack-ca/ca.crt
+        interface: 'public'
+        identity_api_version: '3'
+        region_name: yourOpenstackDomain-goes-here

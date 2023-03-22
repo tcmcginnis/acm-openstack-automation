@@ -1,0 +1,23 @@
+---
+# tasks file for acm-gather-deployment-facts
+
+- name: Validate presence of CA Certificate
+  stat: path="{{ cacert }}"
+  register: cacert_status
+
+- name: Fail if the CA Certificate is not present
+  fail: msg="The CA Certificate {{ cacert }} is not present.  This is required for OpenStack SDK Communications."
+  when: not cacert_status.stat.exists
+
+
+- import_tasks: osp-subnet.yaml
+
+- import_tasks: osp-compute-api-ingress-vips.yaml
+
+- import_tasks: osp-rhcos-image.yaml
+
+- import_tasks: ocp-image.yaml
+
+- import_tasks: osp-server-flavor.yaml
+
+- import_tasks: display-deployment-config.yaml

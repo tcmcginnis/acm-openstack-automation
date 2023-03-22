@@ -1,0 +1,20 @@
+---
+# tasks file for acm-deployment-defaults---
+ #
+- name: Extract Openshift cluster name from Openstack Project name
+  shell: echo "{{ osp_project }}" | awk -F- '{print $1"-"$2}'
+  register: result
+
+- name: Set Openshift Cluster Name
+  set_fact: cluster_name={{ result.stdout }}
+
+- name: Construct OpenStack Auth URL
+  set_fact:
+    osp_url: "https://openstack.{{ osp_cloud }}.{{ osp_datacenter }}.YourDomainNameGoesHere.com:13000"
+
+- name: Set keys
+  set_fact:
+    osp_admin: "{{ osp_admin | b64decode }}"
+    osp_adminkey: "{{ osp_adminkey | b64decode }}"
+    osp_password: "{{ osp_password | b64decode }}"
+    osp_username: "{{ osp_username | b64decode }}"

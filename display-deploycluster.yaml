@@ -1,0 +1,10 @@
+---
+# Just get deployment information and display the results.  No actions are taken.
+#
+- hosts: localhost
+  user: root
+  roles:
+  - role: acm-deployment-defaults
+  - role: osp-set-project
+  - role: acm-gather-deployment-facts
+

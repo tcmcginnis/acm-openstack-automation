@@ -1,0 +1,26 @@
+---
+# tasks file for acm-gather-deployment-facts
+
+ # === OpenStack Subnet processing - Compute the apivip and ingress vips from the cidr variable  ========================
+ #
+- name: Get first 3 octets of the CIDR address (subnet)
+  shell: echo "{{ cidr }}" | awk -F/ '{print $1}'|awk -F. '{print $1"."$2"."$3}'
+  register: result
+
+- name: Save first 3 octets of CIDR
+  set_fact:
+    first_octets: "{{ result.stdout }}"
+
+- name: Get last octet of CIDR address
+  shell: echo "{{ cidr }}" | awk -F/ '{print $1}'|awk -F. '{print $4}'
+  register: result
+
+- name: Save last octet of CIDR
+  set_fact:
+    last_octet: "{{ result.stdout }}"
+
+- name: Compute and save IP Addresses for API and VIP
+  set_fact:
+    apiVIP: "{{ first_octets }}.{{ last_octet | int + 2 }}"
+    ingressVIP: "{{ first_octets }}.{{ last_octet | int + 3 }}"
+

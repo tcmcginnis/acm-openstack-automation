@@ -1,0 +1,67 @@
+apiVersion: v1
+baseDomain: {{ ocp_basedomain }}
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+  name: worker
+  platform:
+    openstack:
+      type: {{ server_flavor }}
+      zones:
+      - az1
+      - az2
+      - az3
+  replicas: 3
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  platform:
+    openstack:
+      type: {{ server_flavor }}
+      zones:
+      - az1
+      - az2
+      - az3
+  replicas: 3
+metadata:
+  creationTimestamp: null
+  name: {{ cluster_name }}
+networking:
+  clusterNetwork:
+  - cidr: 100.112.0.0/15
+    hostPrefix: 24
+  machineNetwork:
+  - cidr: {{ cidr }}
+  networkType: OVNKubernetes
+  serviceNetwork:
+  - 100.114.0.0/16
+platform:
+  openstack:
+    apiVIP: {{ apiVIP }}
+    cloud: {{ osp_project }}
+    clusterOSImage: {{ os_image }}
+    defaultMachinePlatform:
+      type: {{ server_flavor }}
+    externalDNS: null
+    ingressVIP: {{ ingressVIP }}
+    machinesSubnet: {{ subnet_id }}
+publish: External
+pullSecret: '{"auths":{"11.21.24.7:5001":{"auth":"b3   <<<<< HERE IS WHERE THE OpenShift Pull key is stored >>>>>>>
+sshKey: |
+  ssh-rsa AAAAB3N   <<<<<< HERE IS WHERE THE SSH Public ket is stored >>>>>>>>
+
+imageContentSources:
+- mirrors:
+  - docker.artifactory.YourDomainNameGoesHere.com/openshift-release-dev/ocp-release
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - docker.artifactory.YourDomainNameGoesHere.com/openshift-release-dev/ocp-v4.0-art-dev
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+
+additionalTrustBundle: |
+  -----BEGIN CERTIFICATE-----
+  ....    <<<<<< Certificate bundle Goes HERE >>>>>>>>>
+  -----END CERTIFICATE-----
+  -----BEGIN CERTIFICATE-----
+  -----END CERTIFICATE-----

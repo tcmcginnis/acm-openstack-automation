@@ -1,0 +1,39 @@
+---
+# tasks file for ocp-create-acm-objects
+
+# === Inject the ACM cluster definition  yamls into the ACM cluster.
+ #
+- name: "Check if we are logged into an ACM cluster"
+  shell: oc get clusterimagesets | head -1
+  register: result
+ 
+- name: Fail if we are not logged into a valid OpenShift cluster running ACM
+  fail:
+    msg: "No Openshift login has been detected or the cluster is not running ACM"
+  when: result.stdout == ""
+
+- name: "Check if the cluster is already managed by ACM"
+  shell: oc project {{ cluster_name }} 2>/dev/null
+  ignore_errors: true
+  register: result
+
+- name: display results
+  debug:
+    msg: "{{result }}"
+ 
+- name: Fail if it appears ACM is already managing this cluster
+  fail:
+    msg: "ACM appears to already be managing cluster '{{ cluster_name }}'"
+  when: result.rc == 0
+
+- name: Get list of config yamls in the acm folder
+  find:
+    paths: "{{ yaml_directory }}"
+    patterns: "??-*.yaml,??-*.yml"
+  register: result
+
+- name: Apply ACM deployment configs.   Launching Openshift cluster deployment
+  shell: "oc apply -f {{ item }}"
+  with_items:
+    - "{{ result['files'] | map(attribute='path') | list }}"
+

@@ -1,0 +1,22 @@
+---
+ # === Deployment variable Section  =====================================================
+
+- name: Display Deployment Configuration values
+  debug:
+    msg:
+      - "OpenShift Cluster:  {{ cluster_name }}"
+      - "Openstack Project:  {{ osp_project }}"
+      - ""
+      - "Subnet id:          {{ subnet_id }}"
+      - "Subnet name:        {{ subnet_name }}"
+      - "CIDR:               {{ cidr }}"
+      - "Gateway IP:         {{ gateway_ip }}"
+      - "API VIP:            {{ apiVIP }}"
+      - "Ingress VIP:        {{ ingressVIP }}"
+      - ""
+      - "OpenShift version:  {{ ocp_version }}"
+      - ""
+      - "CoreOS image:       {{ os_image }}"
+      - ""
+      - "OCP Installer Image: {{ ocp_image }}"
+

@@ -1,0 +1,8 @@
+- hosts: localhost
+  user: root
+  vars:
+  roles:
+
+  - role: acm-deployment-defaults
+
+  - role: ocp-certificate-inject

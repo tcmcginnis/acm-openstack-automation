@@ -1,0 +1,8 @@
+kind: Project
+apiVersion: project.openshift.io/v1
+metadata:
+  name: {{ cluster_name }}
+  annotations:
+    openshift.io/node-selector: node-role.kubernetes.io/infra=
+    scheduler.alpha.kubernetes.io/defaultTolerations: >-
+      [{"effect":"NoSchedule","key": "node-role.kubernetes.io/infra","operator": "Exists"}]

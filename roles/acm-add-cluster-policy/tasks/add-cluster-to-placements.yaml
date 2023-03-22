@@ -1,0 +1,14 @@
+---
+- name: Add cluster name to common placement definition {{ PlacementFile_ReleaseSpecific }}
+  lineinfile:
+    path: '{{ PlacementFile }}'
+    insertafter: "^      values:"
+    line: "      - {{ cluster_name }}"
+    state: present
+
+- name: Add cluster name to "version specific" placement definition {{ PlacementFile_ReleaseSpecific }}
+  lineinfile:
+    path: '{{ PlacementFile_ReleaseSpecific }}'
+    insertafter: "^      values:"
+    line: "      - {{ cluster_name }}"
+    state: present

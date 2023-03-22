@@ -1,0 +1,10 @@
+- hosts: localhost
+  user: root
+  vars:
+     preview: false
+  roles:
+  - role: acm-deployment-defaults
+
+  - role: acm-pre-deployment
+    when: not preview
+

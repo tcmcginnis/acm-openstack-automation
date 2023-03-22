@@ -1,0 +1,51 @@
+---
+
+ # === CoreOS Image selector Section  ===================================================
+
+- name: Get image info from OpenStack
+  os_image_info:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_username }}"
+      password: "{{ osp_password }}"
+      project_name: "{{ osp_project }}"
+      project_domain_name: "{{ osp_projectdomain }}"
+      user_domain_name: "{{ osp_userdomain }}"
+    cacert: "{{ cacert }}"
+  register: images
+
+ #   - name: Display OpenStack images
+ #     debug:
+ #       msg:
+ #         - "{{ images.openstack_image }}"
+ #         - "{{ images }}"
+
+ # - name: print images
+ #   debug:
+ #     msg: "{{ items }}"
+ #   vars:
+ #     items: "{{ images.openstack_image | map(attribute='name') | list }}"
+
+- name: "Initialize the os_image variable if it hasn't already been set"
+  set_fact:
+    os_image: ""
+  when: not os_image
+
+- name: "Locate valid CoreOS image for OpenShift Release {{ ocp_release }}"
+  set_fact:
+    os_image: "{{ item }}"
+  when: "'rhcos-{{ocp_release}}' in item"
+  with_items:
+    - "{{ images.openstack_image | map(attribute='name') | list }}"
+
+- name: Fail if no acceptable OS images are located on OpenStack
+  fail:
+    msg:
+      - "No acceptable OS images for Openshift Release {{ ocp_release }} located in Openstack"
+  when: os_image  == ""
+
+- name: print selected image
+  debug:
+    msg: "Using CoreOS Openstack image >>>{{ os_image }}<<<"
+
+

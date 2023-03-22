@@ -1,0 +1,36 @@
+---
+# defaults file for acm-gather-deployment-facts---
+
+osp_username: base64 encoded username goes here
+osp_password: base64 encoded password goes here
+osp_userdomain: user domeina goes here
+osp_admin: base64 admin id goes here
+osp_adminkey: base64 admin key goes here
+osp_admindomain: "default"
+osp_adminproject: admin id goes here
+osp_projectdomain: project domain goes here
+ocp_basedomain: base DNS domain name for clusters goes here
+
+ocp_release: "4.10"
+subnet_search_regex: regex used to search for the common (stretch) network goes here
+server_flavor: oc-16x96-k8s-worker
+server_flavor_infra: oc-16x64-k8s-worker
+server_flavor_worker: oc-16x64-k8s-worker
+
+os_image:
+
+git_repo_path: Path to place ACM yaml goes here
+cacert: Location of the certificate to access Openstack goes here
+
+config_list:
+  - 00-namespace
+  - 01-openstack_trust
+  - 02-openstack_creds
+  - 03-install-config
+  - 04-pull-secret
+  - 05-secret-sshkey
+  - 06-ClusterDeployment
+  - 07-ManagedCluster
+  - 08-KlusterletAddonConfig
+ # NOTE: Leaving out install-config as it's managed seperately
+ #  - install-config

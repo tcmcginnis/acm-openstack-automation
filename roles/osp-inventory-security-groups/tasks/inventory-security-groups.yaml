@@ -1,0 +1,82 @@
+---
+# tasks file for Inventorying all required OpenStack security groups.
+# Set variables for all SG names and extract the OpenShift Cluster ID for machine set templates.
+
+ # Additional masters Security Group =======================================================
+- name: Set Additional masters Security Group name
+  set_fact:
+    osp_sg: "additional-masters-sg"
+
+- import_tasks: get-osp-security-group.yaml
+
+- name: Save SG name
+  set_fact:
+    osp_sg_additional_masters_name: "{{ osp_sg_name }}"
+    osp_sg_additional_masters_id: "{{ osp_sg_id }}"
+
+ # Additional workers Security Group =======================================================
+- name: Set Additional workers Security Group name
+  set_fact:
+    osp_sg: "additional-workers-sg"
+
+- import_tasks: get-osp-security-group.yaml
+
+- name: Save SG name
+  set_fact:
+    osp_sg_additional_workers_name: "{{ osp_sg_name }}"
+    osp_sg_additional_workers_id: "{{ osp_sg_id }}"
+
+ # Cluster Master Security Group ===========================================================
+- name: Set cluster master Security Group name
+  set_fact:
+    osp_sg: "{{ cluster_name }}-*master"
+
+- import_tasks: get-osp-security-group.yaml
+
+- name: Save SG name
+  set_fact:
+    osp_sg_master_name: "{{ osp_sg_name }}"
+    osp_sg_master_id: "{{ osp_sg_id }}"
+
+ # Cluster Worker Security Group ===========================================================
+- name: Set cluster worker Security Group name
+  set_fact:
+    osp_sg: "{{ cluster_name }}-*worker"
+
+- import_tasks: get-osp-security-group.yaml
+
+- name: Save SG name
+  set_fact:
+    osp_sg_worker_name: "{{ osp_sg_name }}"
+    osp_sg_worker_id: "{{ osp_sg_id }}"
+
+ # Proxy ingress Security Group ============================================================
+- name: Set ingress Security Group name
+  set_fact:
+    osp_sg: "proxy-ingress-sg"
+
+- import_tasks: get-osp-security-group.yaml
+
+- name: Save SG name
+  set_fact:
+    osp_sg_ingress_name: "{{ osp_sg_name }}"
+    osp_sg_ingress_id: "{{ osp_sg_id }}"
+
+ # Extract OpenShift Cluster ID from master Security Group name ============================
+- name: Extract Openshift cluster id from Openstack security group
+  shell: echo "{{ osp_sg_master_name }}" | sed "s/{{ cluster_name }}-//"|awk -F- '{print $1}'
+  register: result
+
+- name: Set Openshift Cluster ID
+  set_fact: cluster_id={{ result.stdout }}
+
+ # Display area ============================================================================
+- name: Display Security groups
+  debug:
+    msg:
+      - "{{ osp_sg_additional_masters_name }}: {{ osp_sg_additional_masters_id }}"
+      - "{{ osp_sg_additional_workers_name }}: {{ osp_sg_additional_workers_id }}"
+      - "{{ osp_sg_master_name }}: {{ osp_sg_master_id }}"
+      - "{{ osp_sg_worker_name }}: {{ osp_sg_worker_id }}"
+      - "{{ osp_sg_ingress_name }}: {{ osp_sg_ingress_id }}"
+      - "Cluster ID: {{ cluster_id }}"

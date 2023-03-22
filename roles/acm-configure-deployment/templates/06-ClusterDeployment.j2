@@ -1,0 +1,32 @@
+apiVersion: hive.openshift.io/v1
+kind: ClusterDeployment
+metadata:
+  name: {{ cluster_name }}
+  namespace: {{ cluster_name }}
+  labels:
+    cloud: OpenStack
+    vendor: OpenShift
+    cluster.open-cluster-management.io/clusterset: default
+spec:
+  baseDomain: {{ ocp_basedomain }}
+  clusterName: {{ cluster_name }}
+  controlPlaneConfig:
+    servingCertificates: {}
+  installAttemptsLimit: 1
+  installed: false
+  platform:
+    openstack:
+      certificatesSecretRef:
+        name: openstack-trust
+      credentialsSecretRef:
+        name: {{ cluster_name }}-openstack-creds
+      cloud: {{ osp_project }}
+  provisioning:
+    installConfigSecretRef:
+      name: {{ cluster_name }}-install-config
+    sshPrivateKeySecretRef:
+      name: {{ cluster_name }}-ssh-private-key
+    imageSetRef:
+      name: {{ ocp_image }}
+  pullSecretRef:
+    name: {{ cluster_name }}-pull-secret

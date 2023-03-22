@@ -1,0 +1,7 @@
+---
+# tasks file for acm-add-cluster-policy---
+
+- import_tasks: add-cluster-to-placements.yaml
+
+- import_tasks: add-cluster-policies-to-generator.yaml
+

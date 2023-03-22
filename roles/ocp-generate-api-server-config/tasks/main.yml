@@ -1,0 +1,4 @@
+---
+# tasks file for ocp-generate-api-server-config
+
+- import_tasks: generate-api-server-config.yaml

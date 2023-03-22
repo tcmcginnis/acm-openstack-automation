@@ -1,0 +1,43 @@
+---
+ # Define Security Group Rules.
+- name: Set Security Group rules
+  os_security_group_rule:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_admin }}"
+      password: "{{ osp_adminkey }}"
+      user_domain_name: "{{ osp_admindomain }}"
+      project_domain_name: "{{ osp_admindomain }}"
+      project_name: "{{ osp_adminproject }}"
+    security_group: "{{ sg_id }}"
+    project: "{{ osp_project }}"
+    cacert: "{{ cacert }}"
+    remote_group: "{{ sg_remote_id }}"
+    direction: "{{ sg_direction }}"
+    ethertype: "{{ sg_ethertype }}"
+    protocol: "{{ sg_protocol }}"
+    port_range_min: "{{ sg_port_min }}"
+    port_range_max: "{{ sg_port_max }}"
+    state: present
+  register: sg
+  when: sg_port_min != "any"
+
+- name: Set Security Group rules
+  os_security_group_rule:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_admin }}"
+      password: "{{ osp_adminkey }}"
+      user_domain_name: "{{ osp_admindomain }}"
+      project_domain_name: "{{ osp_admindomain }}"
+      project_name: "{{ osp_adminproject }}"
+    security_group: "{{ sg_id }}"
+    project: "{{ osp_project }}"
+    cacert: "{{ cacert }}"
+    remote_group: "{{ sg_remote_id }}"
+    direction: "{{ sg_direction }}"
+    ethertype: "{{ sg_ethertype }}"
+    protocol: "{{ sg_protocol }}"
+    state: present
+  register: sg
+  when: sg_port_min == "any"

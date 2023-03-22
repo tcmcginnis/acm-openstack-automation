@@ -1,0 +1,10 @@
+- hosts: localhost
+  user: root
+  roles:
+  - role: acm-deployment-defaults
+
+  - role: osp-set-project
+
+  - role: osp-inventory-security-groups
+
+  - role: ocp-ns-machinesets

@@ -1,0 +1,12 @@
+- hosts: localhost
+  user: root
+  vars:
+    ns_name: vas
+  roles:
+  - role: acm-deployment-defaults
+
+  - role: osp-set-project
+
+  - role: osp-inventory-security-groups
+
+  - role: ocp-vas-machinesets

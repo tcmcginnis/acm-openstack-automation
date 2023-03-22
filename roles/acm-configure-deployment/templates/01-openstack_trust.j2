@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: openstack-trust
+  namespace: {{ cluster_name }}
+stringData:
+  ca.crt: |-
+    >>>>> HERE IS WHERE THE CACERTS go for accessing OpenStack <<<<<<
+    -----BEGIN CERTIFICATE-----
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    -----END CERTIFICATE-----
+type: Opaque

@@ -1,0 +1,12 @@
+---
+# tasks file git-pull-post-install-repo
+#
+- name: Refresh GIT repo '{{ git_post_deployment_path }}'
+  shell: git -C {{ git_post_deployment_path }} pull
+  register: result
+
+- name: Display result
+  debug:
+    msg: "{{ result }}"
+
+

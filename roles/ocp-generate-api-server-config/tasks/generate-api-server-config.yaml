@@ -1,0 +1,37 @@
+---
+ #
+- name: Check the presence of the git repo hub "{{ git_repo_path }}"
+  stat:
+    path: "{{ git_repo_path }}"
+  register: gitrepo
+
+- name: Generate a GIT based folder for the yaml output
+  set_fact:
+    yaml_directory: "{{ git_repo_path }}/{{ cluster_name }}/"
+  when: gitrepo.stat.exists
+
+- name: Ensure the Machinesets folder exists and create one if not
+  file:
+    path: "{{ yaml_directory }}"
+    state: directory
+  when: gitrepo.stat.exists
+
+- name: Set the yaml directory to the playbook directory if the GIT repo directory does not exist
+  set_fact:
+    yaml_directory: "{{ playbook_dir }}"
+  when: not gitrepo.stat.exists
+
+- name: Display location of deployment yaml"
+  debug:
+    msg: "Writing api-server-config yaml to '{{ yaml_directory }}'"
+
+- name: "Remove deployment yaml files from {{ yaml_directory }} if it already exist"
+  ansible.builtin.file:
+    path: "{{ yaml_directory }}/api-server-config.yaml"
+    state: absent
+
+- name: "Process Jinja 2 template for all zones"
+  template:
+    src:  "api-server-config.j2"
+    dest:  "{{ yaml_directory }}/api-server-config.yaml"
+

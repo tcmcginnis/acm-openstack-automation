@@ -1,0 +1,59 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  name: {{ cluster_name }}-{{ cluster_id }}-infra-{{ item }}
+  namespace: openshift-machine-api
+  labels:
+    machine.openshift.io/cluster-api-cluster: {{ cluster_name }}-{{ cluster_id }}
+    machine.openshift.io/cluster-api-machine-role: infra
+    machine.openshift.io/cluster-api-machine-type: infra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: {{ cluster_name }}-{{ cluster_id }}
+      machine.openshift.io/cluster-api-machineset: {{ cluster_name }}-{{ cluster_id }}-infra-{{ item }}
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: {{ cluster_name }}-{{ cluster_id }}
+        machine.openshift.io/cluster-api-machine-role: infra
+        machine.openshift.io/cluster-api-machine-type: infra
+        machine.openshift.io/cluster-api-machineset: {{ cluster_name }}-{{ cluster_id }}-infra-{{ item }}
+    spec:
+      metadata:
+        labels:
+          node-role.kubernetes.io/infra: ''
+      providerSpec:
+        value:
+          cloudName: openstack
+          networks:
+            - filter: {}
+              subnets:
+                - filter: {}
+                  uuid: {{ subnet_id }}
+          userDataSecret:
+            name: worker-user-data
+          availabilityZone: {{ item }}
+          cloudsSecret:
+            name: openstack-cloud-credentials
+            namespace: openshift-machine-api
+          serverMetadata:
+            Name: {{ cluster_name }}-{{ cluster_id }}-worker
+            openshiftClusterID: {{ cluster_name }}-{{ cluster_id }}
+          securityGroups:
+            - filter: {}
+              name: {{ cluster_name }}-{{ cluster_id }}-worker
+            - filter: {}
+              uuid: {{ osp_sg_additional_workers_id }}
+          trunk: true
+          kind: OpenstackProviderSpec
+          tags:
+            - openshiftClusterID={{ cluster_name }}-{{ cluster_id }}
+          image: {{ os_image }}
+          apiVersion: openstackproviderconfig.openshift.io/v1alpha1
+          flavor: {{ server_flavor_infra }}
+          primarySubnet: {{ subnet_id }}
+      taints:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/infra

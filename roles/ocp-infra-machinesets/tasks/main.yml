@@ -1,0 +1,5 @@
+---
+# tasks file for ocp-infra-machinesets---
+
+- import_tasks: machinesets.yaml
+

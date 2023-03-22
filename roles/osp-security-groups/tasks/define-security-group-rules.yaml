@@ -1,0 +1,148 @@
+---
+# tasks file for Defining rules for all required OpenStack security groups.
+
+# Security Group Rules: Additional masters ================================
+- name: Set Additional masters Security Group rules (icmp)
+  set_fact:
+    sg_id: "{{ osp_sg_additional_masters_id }}"
+    sg_remote_id: "{{ osp_sg_worker_id }}"
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: icmp
+    sg_port_min: any
+    sg_port_max: ""
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+- name: Set Additional masters Security Group rules (tcp)
+  set_fact:
+    sg_id: "{{ osp_sg_additional_masters_id }}"
+    sg_remote_id: "{{ osp_sg_worker_id }}"
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: tcp
+    sg_port_min: 1
+    sg_port_max: 65535
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+- name: Set Additional masters Security Group rules (udp)
+  set_fact:
+    sg_id: "{{ osp_sg_additional_masters_id }}"
+    sg_remote_id: "{{ osp_sg_worker_id }}"
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: udp
+    sg_port_min: 1
+    sg_port_max: 65535
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+# Security Group Rules: Additional workers ================================
+- name: Set Additional workers Security Group rules (icmp to masters)
+  set_fact:
+    sg_id: "{{ osp_sg_additional_workers_id }}"
+    sg_remote_id: "{{ osp_sg_master_id }}"
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: icmp
+    sg_port_min: any
+    sg_port_max: ""
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+- name: Set Additional workers Security Group rules (icmp to workers)
+  set_fact:
+    sg_id: "{{ osp_sg_additional_workers_id }}"
+    sg_remote_id: "{{ osp_sg_worker_id }}"
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: icmp
+    sg_port_min: any
+    sg_port_max: ""
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+- name: Set Additional workers Security Group rules (tcp to masters)
+  set_fact:
+    sg_id: "{{ osp_sg_additional_workers_id }}"
+    sg_remote_id: "{{ osp_sg_master_id }}"
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: tcp
+    sg_port_min: 1
+    sg_port_max: 65535
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+- name: Set Additional workers Security Group rules (tcp to workers)
+  set_fact:
+    sg_id: "{{ osp_sg_additional_workers_id }}"
+    sg_remote_id: "{{ osp_sg_worker_id }}"
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: tcp
+    sg_port_min: 1
+    sg_port_max: 65535
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+- name: Set Additional workers Security Group rules (tcp to masters)
+  set_fact:
+    sg_id: "{{ osp_sg_additional_workers_id }}"
+    sg_remote_id: "{{ osp_sg_master_id }}"
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: udp
+    sg_port_min: 1
+    sg_port_max: 65535
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+- name: Set Additional workers Security Group rules (tcp to workers)
+  set_fact:
+    sg_id: "{{ osp_sg_additional_workers_id }}"
+    sg_remote_id: "{{ osp_sg_worker_id }}"
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: udp
+    sg_port_min: 1
+    sg_port_max: 65535
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+
+# Security Group Rules: proxy-ingress =====================================
+- name: Set Additional workers Security Group rules (http)
+  set_fact:
+    sg_id: "{{ osp_sg_ingress_id }}"
+    sg_remote_id: ""
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: tcp
+    sg_port_min: 80
+    sg_port_max: 84
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+- name: Set Additional workers Security Group rules (https)
+  set_fact:
+    sg_id: "{{ osp_sg_ingress_id }}"
+    sg_remote_id: ""
+    sg_direction: ingress
+    sg_ethertype: IPv4
+    sg_protocol: tcp
+    sg_port_min: 443
+    sg_port_max: 447
+
+- import_tasks: set-osp-security-group-rules.yaml
+
+
+
+ #        - "{{ osp_sg_additional_masters_name }}: {{ osp_sg_additional_masters_id }}"
+ #      - "{{ osp_sg_additional_workers_name }}: {{ osp_sg_additional_workers_id }}"
+ #      - "{{ osp_sg_master_name }}: {{ osp_sg_master_id }}"
+ #      - "{{ osp_sg_worker_name }}: {{ osp_sg_worker_id }}"
+ #      - "{{ osp_sg_ingress_name }}: {{ osp_sg_ingress_id }}"
+ #      - "Cluster ID: {{ cluster_id }}"
+

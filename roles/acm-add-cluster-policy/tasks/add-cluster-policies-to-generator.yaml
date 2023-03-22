@@ -1,0 +1,9 @@
+---
+ # Adds cluster specific policy definitions to the kustomize generator yaml
+- name: Add cluster specific policy definitions for {{ cluster_name }}
+  blockinfile:
+    path: '{{ GeneratorFile }}'
+    insertafter: "^policies:"
+    block: "{{ lookup('template', 'generator-cluster.template') }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - specific policies for cluster: {{ cluster_name }}"
+    state: present

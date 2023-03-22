@@ -1,0 +1,25 @@
+# Wait until all masters have been provisioned in OpenStack
+
+- name: Set Openstack CLI command line
+  set_fact:
+    OpenStack_CLI: "/usr/bin/openstack \
+                    --os-auth-url='{{ osp_url }}' \
+                    --os-project-domain-name={{ osp_projectdomain }} \
+                    --os-project-id={{ osp_project_id }} \
+                    --os-project-name={{ osp_project }} \
+                    --os-username={{ osp_username }} \
+                    --os-password='{{ osp_password }}' \
+                    --os-user-domain-name={{ osp_userdomain }} \
+                    --os-cacert={{ cacert }}"
+
+- name: list servers
+  shell: "{{ OpenStack_CLI }} server list | grep '\\-master-' | wc -l"
+  register: master_server_count
+  until: "(master_server_count.stdout >= '3')"
+  retries: 60
+  delay: 15
+
+# - name: Display result
+#   debug:
+#     msg: "{{ master_server_count }}"
+

@@ -1,0 +1,4 @@
+---
+# tasks file for git-pull-install
+
+- import_tasks: git-pull-install-repo.yaml

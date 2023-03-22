@@ -1,0 +1,28 @@
+- hosts: localhost
+  user: root
+  vars:
+     preview: false
+  roles:
+  - role: acm-deployment-defaults
+
+  - role: acm-pre-deployment
+    when: not preview
+
+  - role: osp-set-project
+
+  - role: acm-gather-deployment-facts
+
+  - role: git-pull-install
+    when: not preview
+
+  - role: acm-configure-deployment
+    when: not preview
+
+  - role: git-push-install
+    when: not preview
+
+  - role: acm-cluster-deployment
+    when: not preview
+
+  - role: acm-launch-cluster-deployment
+    when: not preview

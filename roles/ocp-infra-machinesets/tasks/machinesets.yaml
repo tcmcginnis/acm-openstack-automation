@@ -1,0 +1,45 @@
+---
+ #
+- name: Check the presence of the git repo hub "{{ git_repo_path }}"
+  stat:
+    path: "{{ git_repo_path }}"
+  register: gitrepo
+
+- name: Generate a GIT based folder for the yaml output
+  set_fact:
+    yaml_directory: "{{ git_repo_path }}/{{ cluster_name }}/machineset"
+  when: gitrepo.stat.exists
+
+- name: Ensure the Machinesets folder exists and create one if not
+  file:
+    path: "{{ yaml_directory }}"
+    state: directory
+  when: gitrepo.stat.exists
+
+- name: Set the yaml directory to the playbook directory if the GIT repo directory does not exist
+  set_fact:
+    yaml_directory: "{{ playbook_dir }}"
+  when: not gitrepo.stat.exists
+
+- name: Display location of deployment yaml"
+  debug:
+    msg: "Writing Machinesets yaml to '{{ yaml_directory }}'"
+
+- name: "Remove deployment yaml files from {{ yaml_directory }} if they already exist"
+  ansible.builtin.file:
+    path: "{{ yaml_directory }}/infra-{{ item }}-machineset.yaml"
+    state: absent
+  with_items:
+    - "az1"
+    - "az2"
+    - "az3"
+
+- name: "Process Jinja 2 template for all zones"
+  template:
+    src:  "infra-machineset.j2"
+    dest:  "{{ yaml_directory }}/infra-{{ item }}-machineset.yaml"
+  with_items:
+    - "az1"
+    - "az2"
+    - "az3"
+

@@ -1,0 +1,5 @@
+---
+# tasks file for osp-wait-for-master-nodes
+
+- import_tasks: osp-wait-for-master-nodes.yaml
+

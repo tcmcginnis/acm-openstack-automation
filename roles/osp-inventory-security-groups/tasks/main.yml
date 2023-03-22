@@ -1,0 +1,6 @@
+---
+# tasks file for osp-security-groups
+
+ # Additional workers Security Group =======================================
+- import_tasks: inventory-security-groups.yaml
+

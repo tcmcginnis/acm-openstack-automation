@@ -1,0 +1,7 @@
+- hosts: localhost
+  user: root
+  vars:
+  roles:
+  - role: acm-deployment-defaults
+
+  - role: acm-launch-cluster-deployment

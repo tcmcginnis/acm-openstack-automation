@@ -1,0 +1,79 @@
+---
+# tasks file for osp-set-project
+
+ # === OpenStack project processing query and processing section  ========================
+ #
+
+ # === Perform test OpenStack login to validate the datacenter / cloud / project name ===
+ #
+- name: Get subnet info from OpenStack
+  os_subnets_info:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_username }}"
+      password: "{{ osp_password }}"
+      user_domain_name: "{{ osp_userdomain }}"
+ #      username: "{{ osp_admin }}"
+ #      password: "{{ osp_adminkey }}"
+ #      user_domain_name: "{{ osp_admindomain }}"
+      project_name: "{{ osp_project }}"
+      project_domain_name: "{{ osp_projectdomain }}"
+    cacert: "{{ cacert }}"
+  register: subnets
+
+ # - name: Display OpenStack subnets
+ #   debug:
+ #    msg:
+ #       - "{{ subnets.openstack_subnets }}"
+
+- name: OpenStack Login / Query error
+  debug:
+    msg:
+      - "!!! OpenStack Login / Query Error !!!"
+      - ""
+      - "Either the Datacenter/Cloud/Project combination is not valid"
+      - "  or the login to this Openstack has failed."
+      - ""
+      - "osp_url: {{ osp_url }}"
+      - ""
+      - "Datacenter: {{ osp_datacenter }}  Cloud: {{ osp_cloud }}  Project: {{ osp_project }}"
+      - ""
+      - "Username: {{ osp_username }}"
+      - ""
+      - "cacert: {{ cacert }}"
+  when: subnets.openstack_subnets == []
+
+- name: Fail if Openstack query returns no results
+  fail:
+    msg:
+      - "OpenStack Query failed!!!"
+      - "Datacenter:{{ osp_datacenter }}  Cloud: {{ osp_cloud }}  Project: {{ osp_project }}"
+  when: subnets.openstack_subnets == []
+
+ # === Get the project id (uuid) to be used in subnet query filters  ====================
+ #
+- name: Get project info from OpenStack
+  os_project_info:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_username }}"
+      password: "{{ osp_password }}"
+      user_domain_name: "{{ osp_userdomain }}"
+ #      username: "{{ osp_admin }}"
+ #      password: "{{ osp_adminkey }}"
+ #      user_domain_name: "{{ osp_admindomain }}"
+      project_name: "{{ osp_project }}"
+      project_domain_name: "{{ osp_projectdomain }}"
+    name: "{{ osp_project }}"
+    cacert: "{{ cacert }}"
+  register: projects
+
+ # - name: Display results
+ #   debug:
+ #     msg:
+ #       - "{{ projects.openstack_projects }}"
+
+- name: Set project id variable from OpenStack query
+  set_fact:
+    osp_project_id: "{{ projects | json_query('openstack_projects[0].id') }}"
+

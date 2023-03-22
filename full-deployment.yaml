@@ -1,0 +1,45 @@
+- hosts: localhost
+  user: root
+  roles:
+  # Cluster deployment
+  - role: acm-deployment-defaults
+
+  - role: acm-pre-deployment
+
+  - role: osp-set-project
+
+  - role: acm-gather-deployment-facts
+
+  - role: git-pull-install
+
+  - role: acm-configure-deployment
+
+  - role: git-push-install
+
+  - role: acm-cluster-deployment
+
+  - role: acm-launch-cluster-deployment
+
+#
+# Wait for cluster to begin
+#
+  - role: osp-wait-for-master-vms
+
+#
+# Post deployment
+#
+  - role: osp-inventory-security-groups
+
+  - role: osp-security-groups
+
+  - role: git-pull-post-install
+
+  - role: ocp-infra-machinesets
+
+  - role: ocp-generate-api-server-config
+
+  - role: ocp-certificate-inject
+
+  - role: acm-add-cluster-policy
+
+  - role: git-push-post-install
