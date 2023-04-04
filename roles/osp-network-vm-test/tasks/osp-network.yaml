@@ -1,0 +1,97 @@
+---
+# tasks file for locating network information in OpenStack
+
+ # === OpenStack Network processing query and processing section  ========================
+ #
+
+ # === Perform test OpenStack login to validate the datacenter / cloud / project name ===
+ #
+- name: Get network info from OpenStack
+  os_networks_info:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_username }}"
+      password: "{{ osp_password }}"
+      project_name: "{{ osp_project }}"
+      project_domain_name: "{{ osp_projectdomain }}"
+      user_domain_name: "{{ osp_userdomain }}"
+    filters:
+      tenant_id: "{{ osp_project_id }}"
+    cacert: "{{ cacert }}"
+  register: networks
+
+- name: Set Network variables from OpenStack query
+  set_fact:
+    network_id: "{{ networks | json_query('openstack_networks[0].id') }}"
+    network_name: "{{ networks | json_query('openstack_networks[0].name') }}"
+
+#- name: Display OpenStack networks
+#  debug:
+#   msg:
+#      - "{{ networks }}"
+#      - "{{ network_name }}"
+#      - "{{ network_id }}"
+
+- name: OpenStack Login / Query error
+  debug:
+    msg:
+      - "!!! OpenStack Login / Query Error !!!"
+      - ""
+      - "Either the Datacenter/Cloud/Project combination is not valid"
+      - "  or the login to this Openstack has failed."
+      - ""
+      - "osp_url: {{ osp_url }}"
+      - ""
+      - "Datacenter: {{ osp_datacenter }}  Cloud: {{ osp_cloud }}  Project: {{ osp_project }}"
+      - ""
+      - "Username: {{ osp_username }}"
+      - ""
+      - "cacert: {{ cacert }}"
+  when: networks.openstack_networks == []
+
+- name: "Initialize the net name in case one is not found"
+  set_fact:
+    net_name: "UNSET"
+
+- name: "Locate valid network name containing {{ network_search_regex }}"
+  set_fact:
+    net_name: "{{ item }}"
+  when: "'{{network_search_regex|upper}}' in item|upper"
+  with_items:
+          - "{{ networks.openstack_networks | map(attribute='name') | list }}"
+
+- name: Fail if Openstack query returns no results
+  fail:
+    msg:
+      - "No networks found containing {{ network_search_regex }} in project {{ osp_project }}"
+  when: net_name == "UNSET"
+
+- name: Get network info from OpenStack
+  os_networks_info:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_username }}"
+      password: "{{ osp_password }}"
+      project_name: "{{ osp_project }}"
+      project_domain_name: "{{ osp_projectdomain }}"
+      user_domain_name: "{{ osp_userdomain }}"
+    name: "{{ net_name }}"
+    filters:
+      tenant_id: "{{ osp_project_id }}"
+    cacert: "{{ cacert }}"
+  register: networks
+
+- name: Fail if Openstack query returns no results
+  fail:
+    msg:
+      - "No networks found containing {{ network_search_regex }} in project {{ osp_project }}"
+  when: networks.openstack_networks == []
+
+
+ # === Process the results from the OpenStack network query  =============================
+ #
+- name: Set network variables from OpenStack query
+  set_fact:
+    network_id: "{{ networks | json_query('openstack_networks[0].id') }}"
+    network_name: "{{ networks | json_query('openstack_networks[0].name') }}"
+

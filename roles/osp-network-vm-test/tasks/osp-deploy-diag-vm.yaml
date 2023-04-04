@@ -1,0 +1,103 @@
+---
+
+- name: set defaults
+  set_fact:
+    HEADER: "============ Network validation results - BEGIN ================"
+    RESULT_LABEL: "GATEWAY PING RESULT:"
+    VMNAME: "diag@{{ network_name }}-{{ az }}"
+
+- name: set VM regex
+  set_fact:
+    VMNAME_REGEX: "{{ VMNAME | regex_replace('\\*', '\\*') }}"
+
+- name: Display Deployment Configuration values
+  debug:
+    msg:
+      - "Network id:        {{ network_id }}"
+      - "Network name:      {{ network_name }}"
+      - "Availability zone: {{ az }}"
+      - ""
+      - "RHEL image:        {{ os_image }}"
+      - ""
+      - "Diagnostic VM:     {{ VMNAME }}"
+      - "VM regex:          {{ VMNAME_REGEX }}"
+
+- name: Remove existing VM (if it exists)
+  os_server:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_username }}"
+      password: "{{ osp_password }}"
+      user_domain_name: "{{ osp_userdomain }}"
+      project_name: "{{ osp_project }}"
+      project_domain_name: "{{ osp_projectdomain }}"
+    name: "{{ VMNAME }}"
+    cacert: "{{ cacert }}"
+    state: absent
+
+- name: Build Network diagnostic VM
+  os_server:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_username }}"
+      password: "{{ osp_password }}"
+      user_domain_name: "{{ osp_userdomain }}"
+      project_name: "{{ osp_project }}"
+      project_domain_name: "{{ osp_projectdomain }}"
+    name: "{{ VMNAME }}"
+    cacert: "{{ cacert }}"
+    image: "{{ os_image }}"
+    flavor_ram: 4096
+    network: "{{ network_id }}"
+    availability_zone: "{{ az }}"
+    auto_ip: no
+ #  key: "id_rsa-netdebug.pub"
+ #  key_name: "tom"
+    state: present
+    userdata: |
+      #!/bin/bash
+      echo "{{ HEADER }}"
+      echo "ip routes"
+      ip route
+      echo "."
+      echo "--------------------------------------------------------------------------------"
+      echo "ifconfig"
+      echo "--------------------------------------------------------------------------------"
+      ifconfig
+      IP=$(ip addr show dev eth0 |grep "inet "|awk '{print $2}')
+      GW=$(ip route |grep ^default|awk '{print $3}')
+      echo "."
+      echo "--------------------------------------------------------------------------------"
+      echo "Test connectivity from $IP to network gateway address $GW"
+      echo "SOURCE: $IP"
+      echo "DESTINATION: $GW"
+      echo "--------------------------------------------------------------------------------"
+      ping -c3 $GW
+      RC=$?
+      echo "."
+      echo "================================================================================"
+      echo "."
+      echo "{{ RESULT_LABEL }} $RC"
+      echo "."
+      echo "================================================================================"
+      echo "."
+  ignore_errors: true
+  register: result
+
+#- name: Display results
+#  debug:
+#    msg:
+#      - "{{ result }}"
+
+- name: get VM id
+  set_fact:
+    vm_id: "{{ result.id }}"
+
+- name: Wait for the diagnostic VM to deploy
+  shell: "{{ OpenStack_CLI }} server list | grep '{{ VMNAME_REGEX }}'"
+#  ignore_errors: true
+  register: result
+  until: "(result.rc == 0)"
+  retries: 5
+  delay: 2
+

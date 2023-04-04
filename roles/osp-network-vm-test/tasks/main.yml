@@ -1,0 +1,31 @@
+---
+# tasks file for osp-network-vm-test
+#
+- name: Set Openstack CLI command line
+  set_fact:
+    OpenStack_CLI: "/usr/bin/openstack \
+                    --os-auth-url='{{ osp_url }}' \
+                    --os-project-domain-name={{ osp_projectdomain }} \
+                    --os-project-id={{ osp_project_id }} \
+                    --os-project-name={{ osp_project }} \
+                    --os-username={{ osp_username }} \
+                    --os-password='{{ osp_password }}' \
+                    --os-user-domain-name={{ osp_userdomain }} \
+                    --os-cacert={{ cacert }}"
+
+ # - name: Display CLI
+ #   debug:
+ #     msg:
+ #       - "{{ OpenStack_CLI }}"
+ #
+# Find the network
+- import_tasks: osp-network.yaml
+
+# Find a RHEL OS image
+- import_tasks: osp-rhel-image.yaml
+
+# Create a VM on the selected network
+- import_tasks: osp-deploy-diag-vm.yaml
+
+# Get test results from the console
+- import_tasks: osp-console-extract.yaml

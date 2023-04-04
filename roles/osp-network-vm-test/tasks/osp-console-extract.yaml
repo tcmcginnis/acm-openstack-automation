@@ -1,0 +1,35 @@
+---
+
+- name: Wait for results and extract from console
+  shell: "{{ OpenStack_CLI }} console log show {{ vm_id }} |grep 'cloud-init' | grep -A200 '{{ HEADER }}' | grep -B200 '{{ RESULT_LABEL }}'"
+  ignore_errors: true
+  register: result
+  until: "(result.rc == 0)"
+  retries: 20
+  delay: 2
+
+- name: Display results
+  debug:
+    msg:
+      - "{{ result.stdout_lines }}"
+
+- name: Extract return code for network test
+  shell: "{{ OpenStack_CLI }} console log show {{ vm_id }} |grep 'cloud-init' | grep '{{ RESULT_LABEL }}' | awk -F'{{ RESULT_LABEL }} ' '{print $2}'"
+  ignore_errors: true
+  register: result
+
+- name: set pass/fail
+  set_fact:
+    NETWORK_PASS_FAIL: PASS
+  when: result.stdout == "0"
+
+- name: set pass/fail
+  set_fact:
+    NETWORK_PASS_FAIL: FAIL
+  when: result.stdout != "0"
+
+- name: Display results
+  debug:
+    msg:
+      - "Result of network ping test: {{ NETWORK_PASS_FAIL }}"
+
