@@ -24,8 +24,18 @@
 # Find a RHEL OS image
 - import_tasks: osp-rhel-image.yaml
 
+- name: Set VM name based on the network name and Availablility zone
+  set_fact:
+    VMNAME: "diag@{{ network_name }}-{{ az }}"
+
+# Delete the diag VM
+- import_tasks: osp-delete-diag-vm.yaml
+
 # Create a VM on the selected network
 - import_tasks: osp-deploy-diag-vm.yaml
 
 # Get test results from the console
 - import_tasks: osp-console-extract.yaml
+
+# Delete the diag VM
+- import_tasks: osp-delete-diag-vm.yaml

@@ -4,7 +4,6 @@
   set_fact:
     HEADER: "============ Network validation results - BEGIN ================"
     RESULT_LABEL: "GATEWAY PING RESULT:"
-    VMNAME: "diag@{{ network_name }}-{{ az }}"
 
 - name: set VM regex
   set_fact:
@@ -21,19 +20,6 @@
       - ""
       - "Diagnostic VM:     {{ VMNAME }}"
       - "VM regex:          {{ VMNAME_REGEX }}"
-
-- name: Remove existing VM (if it exists)
-  os_server:
-    auth:
-      auth_url: "{{ osp_url }}"
-      username: "{{ osp_username }}"
-      password: "{{ osp_password }}"
-      user_domain_name: "{{ osp_userdomain }}"
-      project_name: "{{ osp_project }}"
-      project_domain_name: "{{ osp_projectdomain }}"
-    name: "{{ VMNAME }}"
-    cacert: "{{ cacert }}"
-    state: absent
 
 - name: Build Network diagnostic VM
   os_server:

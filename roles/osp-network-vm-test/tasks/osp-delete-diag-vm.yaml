@@ -1,0 +1,15 @@
+---
+
+- name: Remove existing VM (if it exists)
+  os_server:
+    auth:
+      auth_url: "{{ osp_url }}"
+      username: "{{ osp_username }}"
+      password: "{{ osp_password }}"
+      user_domain_name: "{{ osp_userdomain }}"
+      project_name: "{{ osp_project }}"
+      project_domain_name: "{{ osp_projectdomain }}"
+    name: "{{ VMNAME }}"
+    cacert: "{{ cacert }}"
+    state: absent
+
