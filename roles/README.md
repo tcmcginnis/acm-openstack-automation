@@ -19,10 +19,6 @@
                   <BR> Adds the cluster to appropriate placement rules</td>
                 </tr>
                 <tr>
-                  <td> &nbsp; </td> <td> <p><FONT SIZE=+1> <FONT COLOR="blue"> acm-cluster-deployment</p></font> </td>
-                  <td> Set OpenStack Quotas and launch configured ACM deployment (<b>NOTE:</b> <i>Currently only sets OSP Quotas)</i></td>
-                </tr>
-                <tr>
                   <td> &nbsp; </td> <td> <p><FONT SIZE=+1> <FONT COLOR="blue"> acm-configure-deployment </p></font> </td>
                   <td> Generate customized yaml configuration required for ACM deployment </td>
                 </tr>
