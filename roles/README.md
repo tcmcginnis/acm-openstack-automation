@@ -84,15 +84,15 @@
                 <tr>
                   <td> &nbsp; </td> <td> <p><FONT SIZE=+1> <FONT COLOR="blue"> osp-network-vm-test </p></font> </td>
                   <td> Perform internal OpenStack Network connectiviy test. <br>
-                       &nbsp; 1. Locates the requested OpenStack project, network and availability zone <br>
-                       &nbsp; 2. Locates a suitable RHEL image <br>
-                       &nbsp; 3. Builds a VM inside the OpenShift project and injects network diagnotic code <br>
-                       &nbsp; 4. Waits for the diagnostic test to complete. <br>
-                       &nbsp; 5. Extracts network diagnostic results from the VM's console <br>
-                       &nbsp; 6. Deletes the diagnostic VM <br>
-                       &nbsp; 7. Sets PASS/FAIL in a variable "NETWORK_PASS_FAIL"    Value "PASS" or "FAIL" <br>
-                  &nbsp;&nbsp;&nbsp;-e network_search_regex test=[string found in OpenStack network name] <br>
-                  &nbsp;&nbsp;&nbsp;-e az="[Availability Zone] </td>
+                       &nbsp;&nbsp; 1. Locates the requested OpenStack project, network and availability zone <br>
+                       &nbsp;&nbsp; 2. Locates a suitable RHEL image <br>
+                       &nbsp;&nbsp; 3. Builds a VM inside the OpenShift project and injects network diagnotic code <br>
+                       &nbsp;&nbsp; 4. Waits for the diagnostic test to complete. <br>
+                       &nbsp;&nbsp; 5. Extracts network diagnostic results from the VM's console <br>
+                       &nbsp;&nbsp; 6. Deletes the diagnostic VM <br>
+                       &nbsp;&nbsp; 7. Sets PASS/FAIL in a variable "NETWORK_PASS_FAIL"    Value "PASS" or "FAIL" <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;-e network_search_regex test=[string found in OpenStack network name] <br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;-e&nbsp; az="[Availability Zone] </td>
                 </tr>
                 <tr>
                   <td> &nbsp; </td> <td> <p><FONT SIZE=+1> <FONT COLOR="blue"> ocp-proxy-machinesets </p></font> </td>
