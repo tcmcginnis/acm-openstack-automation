@@ -57,17 +57,6 @@
 <BR><p><FONT SIZE=+1> <FONT COLOR="blue"> &emsp; process-certs.yaml</p></font>
 <BR>
 
-<BR>Run the following playbook to generate cluster specific proxy / Ingress machinesets for az1, az2 and az3
-<BR><p><FONT SIZE=+1> <FONT COLOR="blue"> &emsp; proxy-machineset.yaml</p></font>
-<BR>
-
-<BR>Run the following playbook to generate cluster specifig VAS machinesets
-<BR><p><FONT SIZE=+1> <FONT COLOR="blue"> &emsp; vas-machineset.yaml</font></p>
-&emsp; &emsp; <b>ansible-playbook ~/ocp-install/acm-automation/vas-machineset.yaml \\
-<br>&emsp; &emsp; &emsp;  -i ~/ocp-install/inventory/<FONT COLOR="green"><i>[clustername]</i></font>.yml \\
-<br>&emsp; &emsp; &emsp; -e replicas=<FONT COLOR="green"><i>[number of replicas (defaults to 1)]</i></font></b></p>
-<BR>
-
 <table border="0" cellspacing="0" cellpadding="0">
         <tbody>
                 <tr>
