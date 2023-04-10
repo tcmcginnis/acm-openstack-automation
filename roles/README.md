@@ -84,7 +84,7 @@
                 <tr>
                   <td> &nbsp; </td> <td> <p><FONT SIZE=+1> <FONT COLOR="blue"> osp-network-vm-test </p></font> </td>
                   <td> Perform internal OpenStack Network connectiviy test. <br>
-                  &nbsp;&nbsp;&nbsp;-e network_search_regex test=[string found in OpenStack network name <br>
+                  &nbsp;&nbsp;&nbsp;-e network_search_regex test=[string found in OpenStack network name] <br>
                   &nbsp;&nbsp;&nbsp;-e az="[Availability Zone] </td>
                 </tr>
                 <tr>
