@@ -84,6 +84,13 @@
                 <tr>
                   <td> &nbsp; </td> <td> <p><FONT SIZE=+1> <FONT COLOR="blue"> osp-network-vm-test </p></font> </td>
                   <td> Perform internal OpenStack Network connectiviy test. <br>
+                       &nbsp; 1. Locates the requested OpenStack project, network and availability zone
+                       &nbsp; 2. Locates a suitable RHEL image
+                       &nbsp; 3. Builds a VM inside the OpenShift project and injects network diagnotic code
+                       &nbsp; 4. Waits for the diagnostic test to complete.
+                       &nbsp; 5. Extracts network diagnostic results from the VM's console
+                       &nbsp; 6. Deletes the diagnostic VM
+                       &nbsp; 7. Sets PASS/FAIL in a variable "NETWORK_PASS_FAIL"    Value "PASS" or "FAIL"
                   &nbsp;&nbsp;&nbsp;-e network_search_regex test=[string found in OpenStack network name] <br>
                   &nbsp;&nbsp;&nbsp;-e az="[Availability Zone] </td>
                 </tr>
