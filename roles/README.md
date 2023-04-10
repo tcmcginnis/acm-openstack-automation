@@ -82,6 +82,12 @@
                   <td> Generates ns machinesets for application namespaces </td>
                 </tr>
                 <tr>
+                  <td> &nbsp; </td> <td> <p><FONT SIZE=+1> <FONT COLOR="blue"> osp-network-vm-test </p></font> </td>
+                  <td> Perform internal OpenStack Network connectiviy test. </td>
+                  <td>    -e network_search_regex test=[string found in OpenStack network name </td>
+                  <td>    -e az="[Availability Zone] </td>
+                </tr>
+                <tr>
                   <td> &nbsp; </td> <td> <p><FONT SIZE=+1> <FONT COLOR="blue"> ocp-proxy-machinesets </p></font> </td>
                   <td> Generates custom proxy machineset definitions.
                   <br> &nbsp;&nbsp; NOTE: machineset yaml files are currently placed in "ocp-install/cluster/${clustername}/machineset" </td>
