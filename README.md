@@ -51,7 +51,9 @@
 &nbsp; &nbsp; &nbsp; &nbsp; <b>ansible-playbook ~/ocp-install/acm-automation/network-connectivity-test-yaml \\
 <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -i ~/ocp-install/inventory/<FONT COLOR="green"><i>[clustername]</i></font>.yml \\
 <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -e network_search_regex=<FONT COLOR="green"><i>"[Unique string within Network Name]"</i></font> -e az=<FONT COLOR="green"><i>[Availability Zone]</i></font> \\
-<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -e netdiag_test_dns=<FONT COLOR="green"><i>[true|false]</i></font> -e netdiag_test_k8sapi=<FONT COLOR="green"><i>[true|false]</i></font> -e netdiag_test_rhacm=<FONT COLOR="green"><i>[true|false]</i></font></b></p>
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -e netdiag_test_dns=<FONT COLOR="green"><i>[true|false]</i></font> \\
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -e netdiag_test_k8sapi=<FONT COLOR="green"><i>[true|false]</i></font> \\
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -e netdiag_test_rhacm=<FONT COLOR="green"><i>[true|false]</i></font></b></p>
 <BR>
 
 <BR>Run the following playbook to process cluster API and Ingress certificates then store in the TLS cluster policy
