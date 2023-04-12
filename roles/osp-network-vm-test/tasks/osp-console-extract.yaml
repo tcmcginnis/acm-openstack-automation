@@ -1,12 +1,16 @@
 ---
 
 - name: Wait for results and extract from console
-  shell: "{{ OpenStack_CLI }} console log show {{ vm_id }} |grep 'cloud-init' | grep -A200 '{{ HEADER }}' | grep -B200 '{{ RESULT_LABEL }}'"
+  shell: "{{ OpenStack_CLI }} console log show {{ vm_id }} |grep 'cloud-init' | grep -A200 '{{ HEADER }}' | grep -B200 '{{ FOOTER }}'"
   ignore_errors: true
   register: result
   until: "(result.rc == 0)"
   retries: 20
   delay: 2
+
+ # - name: Extract from console
+ #   shell: "{{ OpenStack_CLI }} console log show {{ vm_id }}"
+ #   register: result
 
 - name: Display results
   debug:
@@ -18,12 +22,12 @@
   ignore_errors: true
   register: result
 
-- name: set pass/fail
+- name: set pass/fail in variable "NETWORK_PASS_FAIL"
   set_fact:
     NETWORK_PASS_FAIL: PASS
   when: result.stdout == "0"
 
-- name: set pass/fail
+- name: set pass/fail in variable "NETWORK_PASS_FAIL"
   set_fact:
     NETWORK_PASS_FAIL: FAIL
   when: result.stdout != "0"

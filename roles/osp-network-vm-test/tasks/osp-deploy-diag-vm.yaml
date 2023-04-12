@@ -3,7 +3,8 @@
 - name: set defaults
   set_fact:
     HEADER: "============ Network validation results - BEGIN ================"
-    RESULT_LABEL: "GATEWAY PING RESULT:"
+    FOOTER: "============ Network validation results - END ================"
+    RESULT_LABEL: "NETWORK TEST RESULT:"
 
 - name: set VM regex
   set_fact:
@@ -19,7 +20,6 @@
       - "RHEL image:        {{ os_image }}"
       - ""
       - "Diagnostic VM:     {{ VMNAME }}"
-      - "VM regex:          {{ VMNAME_REGEX }}"
 
 - name: Build Network diagnostic VM
   os_server:
@@ -43,30 +43,12 @@
     userdata: |
       #!/bin/bash
       echo "{{ HEADER }}"
-      echo "ip routes"
-      ip route
-      echo "."
-      echo "--------------------------------------------------------------------------------"
-      echo "ifconfig"
-      echo "--------------------------------------------------------------------------------"
-      ifconfig
-      IP=$(ip addr show dev eth0 |grep "inet "|awk '{print $2}')
-      GW=$(ip route |grep ^default|awk '{print $3}')
-      echo "."
-      echo "--------------------------------------------------------------------------------"
-      echo "Test connectivity from $IP to network gateway address $GW"
-      echo "SOURCE: $IP"
-      echo "DESTINATION: $GW"
-      echo "--------------------------------------------------------------------------------"
-      ping -c3 $GW
-      RC=$?
-      echo "."
-      echo "================================================================================"
-      echo "."
-      echo "{{ RESULT_LABEL }} $RC"
-      echo "."
-      echo "================================================================================"
-      echo "."
+      {{ lookup('template', 'netdiag-base.sh') }}
+      {{ lookup('template', 'netdiag-dns.sh') }}
+      {{ lookup('template', 'netdiag-k8sapi.sh') }}
+      {{ lookup('template', 'netdiag-rhacm.sh') }}
+      {{ lookup('template', 'netdiag-results.sh') }}
+      echo "{{ FOOTER }}"
   ignore_errors: true
   register: result
 
