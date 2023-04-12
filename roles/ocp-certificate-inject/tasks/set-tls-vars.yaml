@@ -1,0 +1,30 @@
+ #- name: set cert directory
+ #  set_fact:
+ #    certsource: "{{ ansible_env.HOME }}/certs"
+ #
+- name: Encode the certificate {{ apps_tls_pem }}
+  shell: cat {{ apps_tls_pem }} | base64 -w0
+  register: result_apps_tls_pem
+- name: Encode the certificate
+  shell: cat {{ apps_tls_key }} | base64 -w0
+  register: result_apps_tls_key
+- name: Encode the certificate
+  shell: cat {{ api_tls_pem }} | base64 -w0
+  register: result_api_tls_pem
+- name: Encode the certificate
+  shell: cat {{ api_tls_key }} | base64 -w0
+  register: result_api_tls_key
+- name: Set encoded TLS variables
+  set_fact:
+    apps_tls_pem_encoded: "{{ result_apps_tls_pem.stdout }}"
+    apps_tls_key_encoded: "{{ result_apps_tls_key.stdout }}"
+    api_tls_pem_encoded: "{{ result_api_tls_pem.stdout }}"
+    api_tls_key_encoded: "{{ result_api_tls_key.stdout }}"
+
+ #- name: Set encoded Certificate filename
+ #  set_fact:
+ #    apps_tls_pem_encoded: "{{ lookup('file', '{{ apps_tls_pem }}' ) | string | b64encode }}"
+ #    apps_tls_key_encoded: "{{ lookup('file', '{{ apps_tls_key }}' ) | string | b64encode }}"
+ #    api_tls_pem_encoded: "{{ lookup('file', '{{ api_tls_pem }}' ) | string | b64encode }}"
+ #    api_tls_key_encoded: "{{ lookup('file', '{{ api_tls_key }}' ) | string | b64encode }}"
+

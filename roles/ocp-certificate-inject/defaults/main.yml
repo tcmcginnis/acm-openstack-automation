@@ -1,0 +1,10 @@
+---
+# defaults file for ocp-certificate-inject
+certsource: "{{ ansible_env.HOME }}/certs"
+apps_tls_pem: "{{ certsource }}/apps{{ cluster_name }}orgname_here.pem"
+apps_tls_key: "{{ certsource }}/apps{{ cluster_name }}orgname_here.key"
+api_tls_pem: "{{ certsource }}/api{{ cluster_name }}orgname_here.pem"
+api_tls_key: "{{ certsource }}/api{{ cluster_name }}orgname_here.key"
+
+api_certs: api-tls-secret-cert
+apps_certs: ingress-wildcard-cert

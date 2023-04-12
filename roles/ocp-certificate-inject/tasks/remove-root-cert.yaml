@@ -1,0 +1,15 @@
+ #- name: set cert directory
+ #  set_fact:
+ #    certsource: "{{ ansible_env.HOME }}/certs"
+ #
+- name: set Certificate filename
+  set_fact:
+    cert_file: "{{ apps_tls_pem }}"
+
+- name: "Remove root cert from {{ cert_file }}"
+  replace:
+    path: '{{ cert_file }}'
+    regexp: '^#TITLE_OF_CERTIFICATE_HERE(.*\n.*)+'
+    replace: ''
+    backup: yes
+

@@ -1,0 +1,8 @@
+---
+# tasks file for ocp-certificate-inject
+
+- import_tasks: remove-root-cert.yaml
+
+- import_tasks: set-tls-vars.yaml
+
+- import_tasks: generate-tls-secrets.yaml
