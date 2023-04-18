@@ -1,6 +1,6 @@
 # OpenShift ACM Deployment Automation
 <b>This *new* offering provides integration with RedHat Advanced Cluster Management provisioning clusters within an OpenStack virtualization environment<br></b>
-<br><b>As a new offering the documentation and refactoring of the playbooks has just begun and will eventually meet the standards of an Ansible collection<br></b>
+<br><b>As a new offering the documentation and refactoring of the playbooks has just begun and will eventually meet the standards of an Ansible "collection"<br></b>
 
 <BR>Run the following playbook to perform a FULL OpenShift cluster deployment and post deployment configuration
 <BR><p><FONT SIZE=+1> <FONT COLOR="blue"> &emsp; full-deployment.yaml</p></font>
